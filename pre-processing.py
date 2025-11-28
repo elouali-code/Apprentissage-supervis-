@@ -23,9 +23,53 @@ schl_bins = [0, 16, 20, 24]
 schl_labels = ['Etudes_Basses', 'Etudes_Moyennes', 'Etudes_Hautes']
 features_df['SCHL_Group'] = pd.cut(features_df['SCHL'], bins=schl_bins, labels=schl_labels, right=True)
 
-# === Regroupement POBP (Lieu de naissance) ===
-features_df['POBP_Group'] = np.where(features_df['POBP'] <= 56, 'Ne_USA', 'Ne_Etranger')
+# === Regroupement RELP (Référent) ===
+relp_bins = [0, 1, 10, 12, 13, 17]
+relp_labels = ['Référent_Partenaire', 'Famille', 'Colloc', 'Référent_Partenaire', 'Autre']
+features_df['RELP_Group'] = pd.cut(features_df['RELP'], bins=schl_bins, labels=schl_labels, right=True)
 
+# === Regroupement POBP (Lieu de naissance) ===
+
+def classify_pob(code):
+    # US + Canada
+    if 1 <= code <= 78 or code == 301:
+        return "US_Canada"
+    
+    # Europe
+    if 100 <= code <= 169:
+        return "Europe"
+    
+    # Extrême-Orient
+    if code in [207, 209, 215, 217, 240]:
+        return "Extreme_Orient"
+    
+    # Moyen-Orient
+    if (212 <= code <= 216) or code in [222, 224, 235, 239, 243, 245, 248, 253]:
+        return "Moyen_Orient"
+    
+    # Asie centrale et du sud (210-254 sauf ceux déjà listés)
+    if 210 <= code <= 254:
+        # exclus : Extreme-Orient + Moyen-Orient
+        excl = [207, 209, 215, 217, 240] + \
+               list(range(212, 217)) + [222, 224, 235, 239, 243, 245, 248, 253]
+        if code not in excl:
+            return "Asie_Centrale_Sud"
+    
+    # Amérique latine
+    if (260 <= code <= 300) or (303 <= code <= 349):
+        return "Amerique_Latine"
+    
+    # Afrique
+    if 400 <= code <= 468:
+        return "Afrique"
+    
+    # Océanie
+    if 501 <= code <= 554:
+        return "Oceanie"
+    
+    return "Autre"  # si aucun cas ne correspond
+
+features_df["POBP_Group"] = features_df["POBP"].apply(classify_pob)
 
 
 # --- 3. Définition des colonnes pour le Pre-processing ---
@@ -37,7 +81,7 @@ numerical_cols = ['AGEP', 'WKHP']
 # On prend nos NOUVEAUX groupes + les colonnes simples (SANS OCCP)
 categorical_cols = [
     'SCHL_Group', 'POBP_Group', # Nos nouveaux groupes
-    'COW', 'MAR', 'RELP', 'SEX', 'RAC1P'       # Les colonnes simples
+    'COW', 'MAR', 'RELP_Group', 'SEX', 'RAC1P'       # Les colonnes simples
 ]
 
 # On supprime les colonnes originales qu'on a regroupées ET OCCP
