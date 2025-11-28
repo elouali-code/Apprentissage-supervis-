@@ -85,7 +85,7 @@ categorical_cols = [
 ]
 
 # On supprime les colonnes originales qu'on a regroupées ET OCCP
-features_df = features_df.drop(columns=['SCHL', 'OCCP', 'POBP'])
+features_df = features_df.drop(columns=['SCHL', 'OCCP', 'POBP', 'RELP'])
 
 print("Regroupements et suppression de OCCP terminés.")
 
