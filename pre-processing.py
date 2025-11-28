@@ -25,8 +25,8 @@ features_df['SCHL_Group'] = pd.cut(features_df['SCHL'], bins=schl_bins, labels=s
 
 # === Regroupement RELP (Référent) ===
 relp_bins = [0, 1, 10, 12, 13, 17]
-relp_labels = ['Référent_Partenaire', 'Famille', 'Colloc', 'Référent_Partenaire', 'Autre']
-features_df['RELP_Group'] = pd.cut(features_df['RELP'], bins=schl_bins, labels=schl_labels, right=True)
+relp_labels = ['Référent_Partenaire', 'Famille', 'Colloc', 'Partenaire_Seul', 'Autre']
+features_df['RELP_Group'] = pd.cut(features_df['RELP'], bins=relp_bins, labels=relp_labels, right=True)
 
 # === Regroupement POBP (Lieu de naissance) ===
 

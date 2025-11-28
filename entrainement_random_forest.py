@@ -14,7 +14,7 @@ except:
     print("Erreur de fichier.")
     exit()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, shuffle=True)
 
 print("\nEntraînement du Random Forest ...")
 start_time = time.time()
@@ -25,13 +25,23 @@ rf_clf.fit(X_train, y_train)
 
 print(f"Entraînement terminé en {time.time() - start_time:.2f} secondes.")
 
-print("\nÉvaluation...")
+print("\nÉvaluation test")
 y_pred = rf_clf.predict(X_test)
 
 accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy Random Forest : {accuracy:.2%}")
+print(f"Accuracy Random Forest test: {accuracy:.2%}")
 print("-" * 30)
 print(classification_report(y_test, y_pred))
+
+print("\nÉvaluation entraînement")
+y_pred = rf_clf.predict(X_train)
+
+accuracy = accuracy_score(y_train, y_pred)
+print(f"Accuracy Random Forest entraînement: {accuracy:.2%}")
+print("-" * 30)
+print(classification_report(y_train, y_pred))
+
+
 
 # On regarde quelles colonnes le modèle a le plus utilisées
 importances = rf_clf.feature_importances_
@@ -46,3 +56,5 @@ plt.title('Top 10 des critères les plus importants (Random Forest)')
 plt.xlabel('Importance (Score de Gini)')
 plt.tight_layout()
 plt.savefig('feature_importance_rf.png')
+print(0.2*33263)
+print(0.8*33263)
